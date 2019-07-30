@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+import cors from './plugin/cors'
 var indexRouter = require('./routes/index');
 const v1 = require('./routes/v1/index')
 
@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors)
 
 app.use('/', indexRouter);
 app.use('/v1', v1)
