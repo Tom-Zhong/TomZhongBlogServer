@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 import cors from './plugin/cors'
+import './plugin/mongodb'
 var indexRouter = require('./routes/index');
 const v1 = require('./routes/v1/index')
 
