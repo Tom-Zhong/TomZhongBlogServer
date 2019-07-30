@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "debug": "DEBUG=tomzhongblogserver:* npm start",
-    "start": "node ./bin/www"
+    "start": "nodemon --exec babel-node ./bin/www",
+    "debug": "DEBUG=tomzhongblogserver:* npm start"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -13,5 +13,12 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "pug": "^2.0.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "nodemon": "^1.19.1"
   }
 }

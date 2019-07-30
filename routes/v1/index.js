@@ -1,7 +1,8 @@
-var express = require('express');
-var v1 = express.Router();
-var user = require('./user/index')
-/* GET home page. */
-v1.use('/user', user);
+import { Router } from 'express'
+const v1 = Router()
+import user from './user'
 
-module.exports = v1;
+// 用户路由
+v1.use('/user', user)
+
+module.exports = v1
