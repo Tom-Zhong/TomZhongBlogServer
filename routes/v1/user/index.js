@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import mongoose from 'mongoose'
 import User from '../../../models/user'
-
+import bcrypt from 'bcrypt'
 const user = Router()
 
 user.get('/', function (req, res, next) {
@@ -41,7 +41,7 @@ user.get('/:id', function (req, res, next) {
       const response = {
         role: result.role,
         name: result.name,
-        age: result.age 
+        age: result.age
       }
       res.status(200).json(response)
     }).catch(err => {
@@ -56,26 +56,62 @@ user.post('/signup', function (req, res, next) {
   let age = req.body.age
   let email = req.body.email
   let pwd = req.body.pwd
-  const user = new User({
-    _id: new mongoose.Types.ObjectId(),
-    name: name,
-    age: age,
-    email: email,
-    pwd: pwd
-  })
 
-  user.save().then(result => {
-    // console.log(result)
-    res.status(201).json({
-      message: 'Handling Create User',
-      createUser: result
+  User.find({ email: email })
+    .exec()
+    .then(user => {
+      // console.log(user)
+      if (user.length >= 1) {
+        res.status(409).json({
+          message: 'Mail exists!'
+        })
+      } else {
+        bcrypt.hash(pwd, 10, (err, hash) => {
+          if (err) {
+            return res.status(500).json({
+              error: err
+            })
+          } else {
+            const user = new User({
+              _id: new mongoose.Types.ObjectId(),
+              name: name,
+              age: age,
+              email: email,
+              pwd: hash
+            })
+
+            user.save().then(result => {
+              console.log(result)
+              res.status(201).json({
+                message: 'Handling Create User',
+                createUser: result
+              })
+            }).catch(err => {
+              console.log(err)
+              res.status(500).json({
+                error: err
+              })
+            })
+          }
+        })
+      }
     })
-  }).catch(err => {
-    console.log(err)
-    res.status(500).json({
-      error: err
-    })
-  })
 })
 
+user.delete('/:userId', (req, res, next) => {
+  User.deleteOne({_id: req.params.userId})
+    .exec()
+    .then(result => {
+      console.log(result)
+      res.status(200).json({
+        message: 'User deleted!'
+      })
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({
+        error: err
+      })
+    })
+})
 export default user
