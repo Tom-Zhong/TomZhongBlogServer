@@ -2,6 +2,7 @@ import { Router } from 'express'
 import mongoose from 'mongoose'
 import User from '../../../models/user'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 const user = Router()
 
 user.get('/', function (req, res, next) {
@@ -97,9 +98,56 @@ user.post('/signup', function (req, res, next) {
       }
     })
 })
+user.post('/login', (req, res, next) => {
+  let email = req.body.email
+  let pwd = req.body.pwd
+  User.find({ email: email })
+    .exec()
+    .then(userInfo => {
+      if (userInfo.length < 1) {
+        return res.status(401).json({
+          message: 'Auth failed'
+        })
+      }
 
+      bcrypt.compare(pwd, userInfo[0].pwd, (err, result) => {
+        if (err) {
+          return res.status(401).json({
+            message: 'Auth failed'
+          })
+        }
+
+        if (result) {
+
+          const token = jwt.sign(
+            {
+              email: userInfo[0].email,
+              userId: userInfo[0]._id
+            },
+            process.env.JWT_KEY,
+            {
+              expiresIn: '1h'
+            })
+          return res.status(200).json({
+            token: token,
+            message: 'Auth successful'
+          })
+        }
+
+        return res.status(401).json({
+          message: 'Auth failed'
+        })
+      })
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({
+        error: err
+      })
+    })
+})
 user.delete('/:userId', (req, res, next) => {
-  User.deleteOne({_id: req.params.userId})
+  User.deleteOne({ _id: req.params.userId })
     .exec()
     .then(result => {
       console.log(result)
