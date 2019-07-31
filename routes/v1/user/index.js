@@ -3,9 +3,10 @@ import mongoose from 'mongoose'
 import User from '../../../models/user'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import checkAuth from '../../../plugin/check-auth'
 const user = Router()
 
-user.get('/', function (req, res, next) {
+user.get('/', checkAuth, function (req, res, next) {
   User.find().exec().then(docs => {
     // console.log(docs)
     const response = {
@@ -30,7 +31,7 @@ user.get('/', function (req, res, next) {
     })
   })
 })
-user.get('/:id', function (req, res, next) {
+user.get('/:id', checkAuth, function (req, res, next) {
   let id = req.params.id
   console.log(id)
   User
@@ -146,7 +147,7 @@ user.post('/login', (req, res, next) => {
       })
     })
 })
-user.delete('/:userId', (req, res, next) => {
+user.delete('/:userId', checkAuth, (req, res, next) => {
   User.deleteOne({ _id: req.params.userId })
     .exec()
     .then(result => {

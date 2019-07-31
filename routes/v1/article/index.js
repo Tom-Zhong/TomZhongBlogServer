@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import mongoose from 'mongoose'
 import Article from '../../../models/article'
-
+import checkAuth from '../../../plugin/check-auth'
 const article = Router()
 
 // article.get('/', function (req, res, next) {
@@ -52,7 +52,7 @@ article.get('/:id', function (req, res, next) {
       })
     })
 })
-article.post('/', function (req, res, next) {
+article.post('/', checkAuth, function (req, res, next) {
   let author = req.body.author ? req.body.author : ''
   let title = req.body.title ? req.body.title : ''
   let content = req.body.content ? req.body.content : ''
