@@ -4,10 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 import cors from './plugin/cors'
-import './plugin/mongodb'
+import initMongodb from './plugin/mongodb'
 var indexRouter = require('./routes/index');
 const v1 = require('./routes/v1/index')
 
+initMongodb(); // 初始化mongodb
 var app = express();
 
 // view engine setup
